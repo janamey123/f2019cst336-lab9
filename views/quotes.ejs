@@ -6,5 +6,11 @@
 <body>
 <h1> Quotes Found: </h1>
 
+<% records.forEach(function (record) { %>
+    <i><%= record.quote %></i> <br>
+    -<%= record.firstName %> <%= record.lastName %>
+    <br><br>
+<% }) %>
+
 </body>
 </html>
