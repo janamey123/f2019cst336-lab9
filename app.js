@@ -15,7 +15,7 @@ app.get("/dbTest", function (req, res) {
    conn.connect(function (err) {
        if (err) throw err;
        console.log("Connected!");
-       let sql = "SELECT * FROM l9_author";
+       let sql = "SELECT * FROM l9_author WHERE sex = 'F'";
 
        conn.query(sql, function (err, rows, fields) {
            if (err) throw err;
@@ -26,7 +26,7 @@ app.get("/dbTest", function (req, res) {
 
 function dbConnection(){
     let conn = mysql.createConnection({
-        host: "gmgcjwawatv599gq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com\t",
+        host: "gmgcjwawatv599gq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
         user: "vr51fr35ztycmd35",
         password: "pfoyhzg1z1yusckl",
         database: "s0potvjirbd4ea7f"
