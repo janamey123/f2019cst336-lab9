@@ -47,6 +47,7 @@ function getQuotes(query) {
     let keyword = query.keyword;
     let author = query.author;
     let name = author.split(' ');
+    console.log(query.sex);
 
     let conn = dbConnection();
 
@@ -70,9 +71,9 @@ function getQuotes(query) {
             if (query.sex) { //user selected a category
                 sql += " AND a.sex = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
             }
-            params.push(query.category, name[0], name[0]);
+            params.push(query.category, name[0], name[1]);
 
-            console.log(params)
+            console.log(params);
 
             console.log("SQL:", sql);
             console.log("first name:", name[0]);
