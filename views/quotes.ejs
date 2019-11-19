@@ -18,7 +18,7 @@
                 $.ajax({
 
                     method: "GET",
-                    url: "/authorInfo?=",
+                    url: "/authorInfo",
                     dataType: "json",
                     data: {"authorId": $(this).attr("id")},
                     success: function (result, status) {
