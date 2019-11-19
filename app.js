@@ -45,7 +45,7 @@ function getAuthorInfo(authorId) {
 
 function getQuotes(query) {
     let keyword = query.keyword;
-    let author = query.author;
+    let author = query.firstName;
     let name = author.split(' ');
 
     let conn = dbConnection();
@@ -64,20 +64,20 @@ function getQuotes(query) {
             if (query.category) { //user selected a category
                 sql += " AND q.category = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
             }
-            if (author) { //user selected a category
-                sql += " AND a.firstName = ? AND a.lastName = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
+            if (author) { //user selected an author
+                sql += " AND a.firstName = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
             }
-            if (query.sex) { //user selected a category
+            if (query.sex) { //user selected the authors gender
                 sql += " AND a.sex = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
             }
             params.push(query.category);
             params.push(name[0]);
-            params.push(name[1]);
             params.push(query.sex);
 
             console.log("SQL:", sql);
+            console.log(params);
 
-            conn.query(sql, params, function (err, rows, fields) {
+            conn.query(sql, params,function (err, rows, fields) {
                 if (err) throw err;
                 conn.end();
                 resolve(rows);

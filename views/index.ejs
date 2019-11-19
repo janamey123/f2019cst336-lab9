@@ -2,10 +2,13 @@
 <html>
 <head>
     <title> Famous Quote Search </title>
+    <link rel="stylesheet" href="/css/styles.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
-<body>
+<body class="text-center">
 
-<h1> Famous Quote Search </h1>
+<h1 class="jumbotron"> Famous Quote Search </h1>
 
 <form action="/quotes">
 
@@ -15,15 +18,15 @@
     <select name="category">
         <option value=""> Select One</option>
         <% categories.forEach(function(i){ %>
-        <option> <%= i.category %>  </option>
+            <option> <%= i.category %>  </option>
         <% }); %>
     </select>
     <br><br>
     Author:
-    <select name="author">
+    <select name="firstName">
         <option value=""> Select One</option>
         <% authors.forEach(function(i){ %>
-        <option> <%= i.firstName + ' ' + i.lastName %>  </option>
+            <option> <%= i.firstName + ' ' + i.lastName %>  </option>
         <% }); %>
     </select>
 
@@ -32,14 +35,11 @@
     <input type="radio" id="F" name="sex" value="F"> <label for="F">Female</label>
     <br><br>
 
-    <!--TODO -->
-    <!-- 1. Add dropdown menu with author's names from the database-->
-    <!-- 2. Add radio buttons to search for Male/Female authors -->
-    <!-- 3. Implement searching quotes by author's name and gender -->
-
-    <button> Search!</button>
+    <button class="btn btn-lg btn-success"> Search!</button>
 
 </form>
-
-</body>
-</html>
+<div>
+    <button onclick="topFunction()" id="myBtn" title="Go to top">&uarr;</button>
+</div>
+<br><br>
+<% include partials/footer %>

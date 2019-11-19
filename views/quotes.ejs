@@ -2,6 +2,7 @@
 <html>
 <head>
     <title> Famous Quote Search </title>
+    <link rel="stylesheet" href="/css/styles.css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -30,12 +31,12 @@
                     }
                 });//ajax
             })
-        });
+        });//ready
     </script>
 </head>
-<body>
+<body class="text-center">
 
-<h1> Quotes Found: </h1>
+<h1 class="jumbotron"> Quotes Found: </h1>
 
 <% records.forEach( function(record){ %>
     <i><%= record.quote %></i> <br>
@@ -44,7 +45,7 @@
 <% }) %>
 
 <!-- Button trigger modal -->
-<button type="button" id="authorInfo" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+<button type="button" id="authorInfo" class="btn btn-lg btn-success" data-toggle="modal" data-target="#exampleModal">
     Launch demo modal
 </button>
 
@@ -73,7 +74,9 @@
         </div>
     </div>
 </div>
+<div>
+    <button onclick="topFunction()" id="myBtn" title="Go to top">&uarr;</button>
+</div>
 
-
-</body>
-</html>
+<br><br>
+<% include partials/footer %>
