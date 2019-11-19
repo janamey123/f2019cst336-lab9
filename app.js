@@ -2,46 +2,91 @@ const express = require("express");
 const mysql = require("mysql");
 const app = express();
 app.set("view engine", "ejs");
-app.use(express.static("public")); //folder for images, css, js
+app.use(express.static("public"));
 
-// routes
+//routes
 app.get("/", async function (req, res) {
     let categories = await getCategories();
-    console.log(categories);
-    res.render("index", {"categories": categories});
-}); //root
+    let authors = await getAuthors();
+    res.render("index", {"categories": categories, "authors": authors});
+});//root
 
 app.get("/quotes", async function (req, res) {
     let rows = await getQuotes(req.query);
-
     res.render("quotes", {"records": rows});
 });//quotes
 
-function getQuotes(query) {
-    let keyword = query.keyword;
+app.get("/authorInfo", async function (req, res) {
+    let rows = await getAuthorInfo(req.query.authorId);
+    res.render("quotes", {"authors": rows});
+});//authorInfo
+
+function getAuthorInfo(authorId) {
     let conn = dbConnection();
 
     return new Promise(function (resolve, reject) {
         conn.connect(function (err) {
             if (err) throw err;
             console.log("Connected!");
-            let sql = `SELECT quote, firstName, lastName, category
-                    FROM l9_quotes
-                    NATURAL JOIN l9_author
-                    WHERE quote LIKE '%${keyword}%'
-                    `;
 
-            if (category) {
-                sql += ` AND category = '${category}'`;
-            }
+            let sql = `SELECT * 
+                      FROM l9_author
+                      WHERE authorId = ${authorId}`;
+            console.log(sql);
             conn.query(sql, function (err, rows, fields) {
                 if (err) throw err;
                 //res.send(rows);
+                conn.end();
+                resolve(rows);
+            });
+        });//connect
+    });//promise
+}//getAuthorInfo
+
+function getQuotes(query) {
+    let keyword = query.keyword;
+    let author = query.author;
+    let name = author.split(' ');
+
+    let conn = dbConnection();
+
+    return new Promise(function (resolve, reject) {
+        conn.connect(function (err) {
+            if (err) throw err;
+            console.log("Connected!");
+
+            let params = [];
+            let sql = `SELECT q.quote, a.firstName, a.lastName, q.category, a.authorId FROM l9_quotes q
+                      NATURAL JOIN l9_author a
+                      WHERE 
+                      q.quote LIKE '%${keyword}%'`;
+
+            if (query.category) { //user selected a category
+                sql += " AND q.category = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
+            }
+            if (author) { //user selected a category
+                sql += " AND a.firstName = ? AND a.lastName = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
+            }
+            if (query.sex) { //user selected a category
+                sql += " AND a.sex = ?"; //To prevent SQL injection, SQL statement shouldn't have any quotes.
+            }
+            params.push(query.category, name[0], name[0]);
+
+            console.log(params)
+
+            console.log("SQL:", sql);
+            console.log("first name:", name[0]);
+
+            conn.query(sql, params, function (err, rows, fields) {
+                if (err) throw err;
+                //res.send(rows);
+                conn.end();
                 resolve(rows);
             });
         });//connect
     });//promise
 }//getQuotes
+
 
 function getCategories() {
     let conn = dbConnection();
@@ -50,13 +95,37 @@ function getCategories() {
         conn.connect(function (err) {
             if (err) throw err;
             console.log("Connected!");
-            let sql = `SELECT DISTINCT category
-                    FROM l9_quotes
-                    ORDER BY category
-                    `;
+
+            let sql = `SELECT DISTINCT category 
+                      FROM l9_quotes
+                      ORDER BY category`;
+
             conn.query(sql, function (err, rows, fields) {
                 if (err) throw err;
                 //res.send(rows);
+                conn.end();
+                resolve(rows);
+            });
+        });//connect
+    });//promise
+}//getCategories
+
+function getAuthors() {
+    let conn = dbConnection();
+
+    return new Promise(function (resolve, reject) {
+        conn.connect(function (err) {
+            if (err) throw err;
+            console.log("Connected!");
+
+            let sql = `SELECT DISTINCT firstName, lastName 
+                      FROM l9_author
+                      ORDER BY firstName`;
+
+            conn.query(sql, function (err, rows, fields) {
+                if (err) throw err;
+                //res.send(rows);
+                conn.end();
                 resolve(rows);
             });
         });//connect
@@ -69,13 +138,15 @@ app.get("/dbTest", function (req, res) {
     conn.connect(function (err) {
         if (err) throw err;
         console.log("Connected!");
+
         let sql = "SELECT * FROM l9_author WHERE sex = 'F'";
 
         conn.query(sql, function (err, rows, fields) {
             if (err) throw err;
+            conn.end();
             res.send(rows);
         });
-    });
+    });//connect
 });//dbTest
 
 function dbConnection() {
@@ -87,7 +158,6 @@ function dbConnection() {
     });//createConnection
     return conn;
 }
-
 
 // starting server
 app.listen(process.env.PORT || 3000, process.env.IP, function () {
